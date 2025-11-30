@@ -10,19 +10,58 @@
             margin: 0;
             padding: 0;
             font-family: Arial, sans-serif;
-            background: white;
+            background-color: #e0f7ff;
             color: black;
             transition: background-color 0.5s, color 0.5s;
         }
 
-        .box {
-            text-align: center;
+        header {
+            background-color: #cceeff;
             padding: 20px 0;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
 
-        .a {
+        header h1 {
+            margin: 0;
+            font-size: 36px;
+            color: #166d9f;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        nav .contacts span {
+            margin-right: 15px;
+            font-size: 16px;
+            color: black;
+        }
+
+        nav .weather-btn {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            background-color: #227ca0;
+            color: white;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+
+        nav .weather-btn:hover {
+            background-color: #145f7d;
+        }
+
+        .box, .a {
             text-align: center;
             padding: 20px 0;
+            color: rgb(18, 122, 201);
         }
 
         button {
@@ -30,7 +69,7 @@
             font-size: 18px;
             cursor: pointer;
             border: none;
-            background-color: #a43838;
+            background-color: #006994;
             color: white;
             border-radius: 5px;
             margin-bottom: 10px;
@@ -38,13 +77,13 @@
         }
 
         button:hover {
-            background-color: #9b3333;
+            background-color: #004f70;
         }
 
         .day2 {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
-            background: #9a9494;
+            background: #44a1d3;
             text-align: center;
             font-weight: bold;
             padding: 10px 0;
@@ -52,8 +91,9 @@
 
         .day2 div {
             padding: 10px 0;
-            border: 1px solid #ccc;
-            background: #f2f2f2;
+            border: 1px solid #3b8ec0;
+            background: #5eb8e7;
+            color: white;
         }
 
         .day {
@@ -66,24 +106,24 @@
 
         .day1 {
             position: relative;
-            border: 1px solid #ccc;
-            background: #fff;
+            border: 1px solid #3b8ec0;
+            background: #b3e0ff;
             cursor: pointer;
-            display: flex;
-            justify-content: center;
-            align-items: center;
             font-size: 18px;
             transition: all 0.3s ease;
             z-index: 1;
+            overflow: hidden;
+            padding: 3px;
+            color: black;
+            border-radius: 5px;
         }
 
-        .day1::before {
-            content: attr(data-day);
+        .day1 span.day-number {
             position: absolute;
             top: 5px;
             right: 5px;
             font-weight: bold;
-            font-size: 16px;
+            font-size: 20px; 
         }
 
         .day1.active {
@@ -95,21 +135,18 @@
             transform: translate(-50%, -50%);
             font-size: 18px;
             z-index: 100;
-            background: #fff;
+            background: #e0f7ff;
             box-shadow: 0 5px 15px rgba(0,0,0,0.4);
             border-radius: 10px;
             padding: 10px;
+            color: black;
         }
 
-        .day1.active::before {
-            display: none;
-        }
-
-        .note-delete-btn {
+        .note-delete-btn, .note-edit-btn {
             padding: 5px 8px;
             font-size: 12px;
             margin-left: 10px;
-            background-color: #a43838;
+            background-color:#006994;
             border-radius: 3px;
             color: white;
             cursor: pointer;
@@ -121,196 +158,211 @@
         }
 
         #noteInput {
-            margin-bottom: 15px; 
+            margin-bottom: 15px;
         }
-    </style>
 
+        #closeBtn {
+            background-color: #4db8ff;
+            color: white;
+        }
+
+        #closeBtn:hover {
+            background-color: #3399ff;
+        }
+
+    </style>
 </head>
 <body>
 
-<div class="a">
-    <h1>Ежедневник на месяц</h1>
-    <h2>Ноябрь 2025 года</h2>
-</div>
-
-<div class="day2">
-    <div>Понедельник</div>
-    <div>Вторник</div>
-    <div>Среда</div>
-    <div>Четверг</div>
-    <div>Пятница</div>
-    <div>Суббота</div>
-    <div>Воскресенье</div>
-</div>
-
-<div class="day">
-    <script>
-        for (let i = 1; i <= 30; i++) {
-            document.write(`<div class="day1" data-day="${i}"></div>`);
-        }
-    </script>
-</div>
-
-<div class="box">
-    <button id="toggleBtn">Сменить на черный фон</button>
-</div>
-
-<script>
-
-    const days = document.querySelectorAll('.day1');
-    let activeDay = null;
-
-    let notes = {};
-
-    days.forEach(day => {
-        renderDayContent(day);
-
-        day.addEventListener('click', (e) => {
-            if (e.target.tagName === "INPUT") return;
-            if (e.target.tagName === "BUTTON") return;
-
-            if (activeDay && activeDay !== day) {
-                closeDay(activeDay);
-            }
-
-            if (day.classList.contains('active')) {
-                closeDay(day);
-            } else {
-                openDay(day);
-            }
-        });
-    });
-
-    function renderDayContent(day) {
-        const num = day.getAttribute("data-day");
-        day.innerHTML = `<span style="position:absolute; top:5px; right:5px; font-weight:bold;">${num}</span>`;
-    }
-
-    function closeDay(day) {
-        day.classList.remove("active");
-        day.innerHTML = "";
-        renderDayContent(day);
-        activeDay = null;
-    }
-
-    function openDay(day) {
-        const n = day.getAttribute("data-day");
-        if (!notes[n]) notes[n] = [];
-
-        day.classList.add("active");
-        activeDay = day;
-
-        day.innerHTML = `
-            <div id="dayContent" style="width:100%; height:100%;">
-                <h2 style="text-align:center; margin-top:5px;">День ${n}</h2>
-
-                <button id="closeBtn" style="width:92%; margin-left:10px; background:#444;">
-                    Закрыть
-                </button>
-
-                <input id="noteInput" placeholder="Новая заметка..."
-                    style="padding:10px; width:90%; font-size:16px; margin-left:10px; margin-top:10px; margin-bottom:5px;">
-
-                <button id="addNoteBtn" style="width:92%; margin-left:10px;">
-                    Добавить
-                </button>
-
-                <ul id="notesList" style="
-                    margin-top:10px;
-                    max-height:200px;
-                    overflow-y:auto;
-                    padding-left:20px;
-                "></ul>
+    <header>
+        <h1>Ежедневка</h1>
+        <nav>
+            <div class="contacts">
+                <span>Телефон: 0509934897</span>
+                <span>Email</span>
+                <span>Instagram</span>
             </div>
-        `;
+            <a href="weather.html" class="weather-btn">Погода</a>
+        </nav>
+    </header>
 
-        day.querySelector("#closeBtn").onclick = () => closeDay(day);
-        updateNotesList(day);
+    <div class="a">
+        <h1>Ежедневник на месяц</h1>
+        <h2>Ноябрь 2025 года</h2>
+    </div>
 
-        day.querySelector("#addNoteBtn").onclick = () => addNote(day);
-    }
+    <div class="day2">
+        <div>Понедельник</div>
+        <div>Вторник</div>
+        <div>Среда</div>
+        <div>Четверг</div>
+        <div>Пятница</div>
+        <div>Суббота</div>
+        <div>Воскресенье</div>
+    </div>
 
-    function addNote(day) {
-        const n = day.getAttribute("data-day");
-        const input = day.querySelector("#noteInput");
+    <div class="day">
+        <script>
+            for (let i = 1; i <= 30; i++) {
+                document.write(`<div class="day1" data-day="${i}"></div>`);
+            }
+        </script>
+    </div>
 
-        if (input.value.trim() === "") return;
+    <div class="box">
+        <button id="toggleBtn">Сменить на черный фон</button>
+    </div>
 
-        notes[n].push({ text: input.value.trim(), done: false });
-        input.value = "";
-        updateNotesList(day);
-    }
+    <script>
+        const days = document.querySelectorAll('.day1');
+        let activeDay = null;
+        let notes = JSON.parse(localStorage.getItem("notes")) || {};
 
-    function toggleCheckbox(day, index) {
-        const n = day.getAttribute("data-day");
-        notes[n][index].done = !notes[n][index].done;
-    }
+        function saveNotes() {
+            localStorage.setItem("notes", JSON.stringify(notes));
+        }
 
-    function deleteNote(day, index) {
-        const n = day.getAttribute("data-day");
-        notes[n].splice(index, 1);
-        updateNotesList(day);
-    }
+        function updateDayPreview() {
+            days.forEach(day => {
+                if (day.classList.contains("active")) return; 
+                const n = day.getAttribute("data-day");
+                const notesList = notes[n] || [];
 
-    function updateNotesList(day) {
-        const n = day.getAttribute("data-day");
-        const list = day.querySelector("#notesList");
-        list.innerHTML = "";
+                let preview = notesList
+                    .slice(0, 5)
+                    .map(note => `<span style="background-color:#3399ff; color:white; padding:2px 4px; border-radius:3px;">${note.text.substring(0, 15)}${note.text.length > 15 ? "…" : ""}</span>`)
+                    .join("<br>");
 
-        notes[n].forEach((note, i) => {
-            const li = document.createElement("li");
+                day.innerHTML = `
+                    <span style="position:absolute; top:5px; right:5px; font-weight:bold; color:black;">${n}</span>
+                    <div style="font-size:14px; text-align:left; padding-top:20px;">
+                        ${preview}
+                    </div>
+                `;
+            });
+        }
+
+        days.forEach(day => {
+            day.addEventListener('click', (e) => {
+                if (["INPUT", "BUTTON", "TEXTAREA"].includes(e.target.tagName)) return;
+                if (activeDay && activeDay !== day) closeDay(activeDay);
+                if (day.classList.contains('active')) closeDay(day); else openDay(day);
+            });
+        });
+
+        function closeDay(day) {
+            day.classList.remove("active");
+            updateDayPreview();
+            activeDay = null;
+        }
+
+        function openDay(day) {
+            const n = day.getAttribute("data-day");
+            if (!notes[n]) notes[n] = [];
+            day.classList.add("active");
+            activeDay = day;
+            day.innerHTML = `
+                <div id="dayContent" style="width:100%; height:100%;">
+                    <h2 style="text-align:center; margin-top:5px;">День ${n}</h2>
+                    <button id="closeBtn" style="width:92%; margin-left:10px;">Закрыть</button>
+                    <input id="noteInput" placeholder="Новая заметка..." style="padding:10px; width:90%; font-size:16px; margin-left:10px; margin-top:10px; margin-bottom:5px;">
+                    <button id="addNoteBtn" style="width:92%; margin-left:10px;">Добавить</button>
+                    <ul id="notesList" style="margin-top:10px; max-height:200px; overflow-y:auto; padding-left:20px;"></ul>
+                </div>
+            `;
+            day.querySelector("#closeBtn").onclick = () => closeDay(day);
+            updateNotesList(day);
+            day.querySelector("#addNoteBtn").onclick = () => addNote(day);
+        }
+
+        function addNote(day) {
+            const n = day.getAttribute("data-day");
+            const input = day.querySelector("#noteInput");
+            if (input.value.trim() === "") return;
+            notes[n].push({ text: input.value.trim(), done: false });
+            saveNotes();
+            input.value = "";
+            updateNotesList(day);
+            updateDayPreview();
+        }
+
+        function toggleCheckbox(day, index) {
+            const n = day.getAttribute("data-day");
+            notes[n][index].done = !notes[n][index].done;
+            saveNotes();
+        }
+
+        function deleteNote(day, index) {
+            const n = day.getAttribute("data-day");
+            notes[n].splice(index, 1);
+            saveNotes();
+            updateNotesList(day);
+            updateDayPreview();
+        }
+
+        function editNote(day, index) {
+            const n = day.getAttribute("data-day");
+            const list = day.querySelector("#notesList");
+            const li = list.children[index];
+            const note = notes[n][index];
 
             li.innerHTML = `
-                <input type="checkbox" ${note.done ? "checked" : ""} onclick="event.stopPropagation(); toggleCheckbox(activeDay, ${i})">
-                ${note.text}
-                <button class="note-delete-btn" onclick="event.stopPropagation(); deleteNote(activeDay, ${i})">
-                    Удалить
-                </button>
+                <textarea style="width:90%;height:50px;font-size:14px;">${note.text}</textarea>
+                <button class="note-edit-btn" onclick="event.stopPropagation(); saveEdit(activeDay, ${index})">Сохранить</button>
+                <button class="note-delete-btn" onclick="event.stopPropagation(); updateNotesList(activeDay)">Отмена</button>
             `;
-
-            list.appendChild(li);
-        });
-    }
-
-    const button = document.getElementById('toggleBtn');
-    let isWhite = true;
-
-    button.addEventListener('click', () => {
-        if (isWhite) {
-            document.body.style.backgroundColor = 'black';
-            document.body.style.color = 'white';
-
-            document.querySelectorAll('.day1').forEach(d => {
-                d.style.backgroundColor = '#333';
-                d.style.color = 'white';
-            });
-
-            document.querySelectorAll('.day2, .day2 div').forEach(d => {
-                d.style.backgroundColor = '#555';
-                d.style.color = 'white';
-            });
-
-            button.textContent = 'Сменить на белый фон';
-        } else {
-            document.body.style.backgroundColor = 'white';
-            document.body.style.color = 'black';
-
-            document.querySelectorAll('.day1').forEach(d => {
-                d.style.backgroundColor = 'white';
-                d.style.color = 'black';
-            });
-
-            document.querySelectorAll('.day2, .day2 div').forEach(d => {
-                d.style.backgroundColor = '#f2f2f2';
-                d.style.color = 'black';
-            });
-
-            button.textContent = 'Сменить на черный фон';
         }
 
-        isWhite = !isWhite;
-    });
-</script>
+        function saveEdit(day, index) {
+            const n = day.getAttribute("data-day");
+            const list = day.querySelector("#notesList");
+            const li = list.children[index];
+            const newText = li.querySelector("textarea").value.trim();
+            if (newText === "") return;
+            notes[n][index].text = newText;
+            saveNotes();
+            updateNotesList(day);
+            updateDayPreview();
+        }
+
+        function updateNotesList(day) {
+            const n = day.getAttribute("data-day");
+            const list = day.querySelector("#notesList");
+            list.innerHTML = "";
+            notes[n].forEach((note, i) => {
+                const li = document.createElement("li");
+                li.innerHTML = `
+                    <input type="checkbox" ${note.done ? "checked" : ""} onclick="event.stopPropagation(); toggleCheckbox(activeDay, ${i})">
+                    ${note.text}
+                    <button class="note-edit-btn" onclick="event.stopPropagation(); editNote(activeDay, ${i})">Редактировать</button>
+                    <button class="note-delete-btn" onclick="event.stopPropagation(); deleteNote(activeDay, ${i})">Удалить</button>
+                `;
+                list.appendChild(li);
+            });
+        }
+
+        updateDayPreview();
+
+        const button = document.getElementById('toggleBtn');
+        let isWhite = true;
+
+        button.addEventListener('click', () => {
+            if (isWhite) {
+                document.body.style.backgroundColor = '#111';
+                document.body.style.color = 'white';
+                document.querySelectorAll('.day1').forEach(d => { d.style.backgroundColor = '#1e3c50'; d.style.color = 'white'; });
+                document.querySelectorAll('.day2, .day2 div').forEach(d => { d.style.backgroundColor = '#2b4f6d'; d.style.color = 'white'; });
+                button.textContent = 'Сменить на белый фон';
+            } else {
+                document.body.style.backgroundColor = '#e0f7ff';
+                document.body.style.color = 'black';
+                document.querySelectorAll('.day1').forEach(d => { d.style.backgroundColor = '#b3e0ff'; d.style.color = 'black'; });
+                document.querySelectorAll('.day2, .day2 div').forEach(d => { d.style.backgroundColor = '#5eb8e7'; d.style.color = 'white'; });
+                button.textContent = 'Сменить на черный фон';
+            }
+            isWhite = !isWhite;
+        });
+    </script>
 
 </body>
 </html>
