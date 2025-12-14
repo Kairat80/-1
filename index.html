@@ -1,368 +1,286 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ежедневник</title>
+    <title>Прогноз погоды</title>
+<style>
+html, body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: #e0f7ff;
+    color: black;
+    transition: background-color 0.5s, color 0.5s;
+}
 
-    <style>
-        html, body {
-            margin: 0;
-            padding: 0;
-            font-family: Arial, sans-serif;
-            background-color: #e0f7ff;
-            color: black;
-            transition: background-color 0.5s, color 0.5s;
-        }
+.site-header {
+    background: linear-gradient(135deg, #1e88e5, #4fc3f7);
+    padding: 20px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
 
-        header {
-            background-color: #cceeff;
-            padding: 20px 0;
-            text-align: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
+.header-content {
+    max-width: 1200px;
+    margin: auto;
+}
 
-        header h1 {
-            margin: 0;
-            font-size: 36px;
-            color: #166d9f;
-        }
+.logo {
+    text-align: center;
+    font-size: 40px;
+    font-weight: bold;
+    color: white;
+    margin-bottom: 10px;
+}
 
-        nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 20px;
-            margin-top: 15px;
-            flex-wrap: wrap;
-        }
+.header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
 
-        nav .contacts span {
-            margin-right: 15px;
-            font-size: 16px;
-            color: black;
-        }
+.contacts {
+    display: flex;
+    gap: 20px;
+    font-size: 18px;
+    color: white;
+    flex-wrap: wrap;
+}
 
-        nav .weather-btn {
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-            border: none;
-            background-color: #227ca0;
-            color: white;
-            border-radius: 5px;
-            text-decoration: none;
-        }
+.weather-btn {
+    background: rgba(255,255,255,0.25);
+    backdrop-filter: blur(8px);
+    color: white;
+    padding: 10px 22px;
+    border-radius: 30px;
+    font-size: 16px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255,255,255,0.3);
+}
 
-        nav .weather-btn:hover {
-            background-color: #145f7d;
-        }
+.weather-btn:hover {
+    background: #0e1ed6;
+    transform: translateY(-2px);
+}
 
-        .box, .a {
-            text-align: center;
-            padding: 20px 0;
-            color: rgb(18, 122, 201);
-        }
+.box {
+    text-align: center;
+    padding: 20px;
+}
 
-        button {
-            padding: 10px 20px;
-            font-size: 18px;
-            cursor: pointer;
-            border: none;
-            background-color: #006994;
-            color: white;
-            border-radius: 5px;
-            margin-bottom: 10px;
-            transition: background-color 0.3s;
-        }
+button {
+    padding: 10px 20px;
+    font-size: 16px;
+    background: #006994;
+    color: white;
+    border-radius: 6px;
+    cursor: pointer;
+    border: none;
+}
 
-        button:hover {
-            background-color: #004f70;
-        }
+button:hover {
+    background: #004f70;
+}
 
-        .day2 {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            background: #44a1d3;
-            text-align: center;
-            font-weight: bold;
-            padding: 10px 0;
-        }
+.box, .a {
+    text-align: center;
+    padding: 20px 0;
+    color: rgb(18, 122, 201);
+}
 
-        .day2 div {
-            padding: 10px 0;
-            border: 1px solid #3b8ec0;
-            background: #5eb8e7;
-            color: white;
-        }
+.day2 {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    background: #4fc3f7;
+    text-align: center;
+    font-weight: bold;
+    padding: 10px 0;
+    border-radius: 15px;
+    gap: 5px;
+}
 
-        .day {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            grid-template-rows: repeat(6, 120px);
-            gap: 0;
-            padding: 0 5px;
-        }
+.day2 div {
+    padding: 10px 0;
+    border: none;
+    background: transparent ;
+    color: white;
+    border-radius: 10px;
+}
 
-        .day1 {
-            position: relative;
-            border: 1px solid #3b8ec0;
-            background: #b3e0ff;
-            cursor: pointer;
-            font-size: 18px;
-            transition: all 0.3s ease;
-            z-index: 1;
-            overflow: hidden;
-            padding: 3px;
-            color: black;
-            border-radius: 5px;
-        }
+.day {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    grid-auto-rows: 120px;
+    gap: 5px;
+    padding: 5px;
+}
 
-        .day1 span.day-number {
-            position: absolute;
-            top: 5px;
-            right: 5px;
-            font-weight: bold;
-            font-size: 20px; 
-        }
+.day1 {
+    position: relative;
+    border: 1px solid #3b8ec0;
+    background: #b3e0ff;
+    cursor: default;
+    font-size: 18px;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+}
 
-        .day1.active {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            width: 330px;
-            height: 400px;
-            transform: translate(-50%, -50%);
-            font-size: 18px;
-            z-index: 100;
-            background: #e0f7ff;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.4);
-            border-radius: 10px;
-            padding: 10px;
-            color: black;
-        }
+.day1:hover {
+    background: #4fc3f7;
+}
 
-        .note-delete-btn, .note-edit-btn {
-            padding: 5px 8px;
-            font-size: 12px;
-            margin-left: 10px;
-            background-color:#006994;
-            border-radius: 3px;
-            color: white;
-            cursor: pointer;
-        }
+.day-number {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    font-weight: bold;
+}
 
-        #notesList li {
-            list-style: none;
-            margin-bottom: 8px;
-        }
+.weather {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 30px;
+    font-size: 14px;
+}
 
-        #noteInput {
-            margin-bottom: 15px;
-        }
-
-        #closeBtn {
-            background-color: #4db8ff;
-            color: white;
-        }
-
-        #closeBtn:hover {
-            background-color: #3399ff;
-        }
-
-    </style>
+.weather img {
+    width: 32px;
+    height: 32px;
+    margin-bottom: 3px;
+}
+</style>
 </head>
 <body>
 
-    <header>
-        <h1>Ежедневка</h1>
-        <nav>
+<header class="site-header">
+    <div class="header-content">
+        <div class="logo">Ежедневка</div>
+
+        <div class="header-row">
             <div class="contacts">
-                <span>Телефон: 0509934897</span>
-                <span>Email</span>
+                <span>050 993 48 97</span>
+                <span>email@mail.com</span>
                 <span>Instagram</span>
             </div>
-            <a href="weather.html" class="weather-btn">Погода</a>
-        </nav>
-    </header>
 
-    <div class="a">
-        <h1>Ежедневник на месяц</h1>
-        <h2>Ноябрь 2025 года</h2>
+            <a href="index.html" class="weather-btn">Ежедневник</a>
+        </div>
     </div>
+</header>
 
-    <div class="day2">
-        <div>Понедельник</div>
-        <div>Вторник</div>
-        <div>Среда</div>
-        <div>Четверг</div>
-        <div>Пятница</div>
-        <div>Суббота</div>
-        <div>Воскресенье</div>
-    </div>
+<div class="a">
+    <h1>Прогноз погоды на месяц</h1>
+    <h2>Декабрь 2025 года</h2>
+</div>
 
-    <div class="day">
-        <script>
-            for (let i = 1; i <= 30; i++) {
-                document.write(`<div class="day1" data-day="${i}"></div>`);
-            }
-        </script>
-    </div>
+<div class="day2">
+    <div>Понедельник</div>
+    <div>Вторник</div>
+    <div>Среда</div>
+    <div>Четверг</div>
+    <div>Пятница</div>
+    <div>Суббота</div>
+    <div>Воскресенье</div>
+</div>
 
-    <div class="box">
-        <button id="toggleBtn">Сменить на черный фон</button>
-    </div>
-
+<div class="day">
     <script>
-        const days = document.querySelectorAll('.day1');
-        let activeDay = null;
-        let notes = JSON.parse(localStorage.getItem("notes")) || {};
+        const weatherData = [
+            { temp: 5, desc: "Солнечно", icon: "https://img.icons8.com/emoji/48/000000/sun-emoji.png" },
+            { temp: 6, desc: "Облачно", icon: "https://img.icons8.com/emoji/48/000000/cloud-emoji.png" },
+            { temp: 4, desc: "Дождь", icon: "https://img.icons8.com/emoji/48/000000/cloud-with-rain-emoji.png" },
+            { temp: 7, desc: "Солнечно", icon: "https://img.icons8.com/emoji/48/000000/sun-emoji.png" },
+            { temp: 3, desc: "Снег", icon: "https://img.icons8.com/emoji/48/000000/snowflake-emoji.png" },
+            { temp: 5, desc: "Облачно", icon: "https://img.icons8.com/emoji/48/000000/cloud-emoji.png" },
+            { temp: 6, desc: "Солнечно", icon: "https://img.icons8.com/emoji/48/000000/sun-emoji.png" },
+            { temp: 4, desc: "Дождь", icon: "https://img.icons8.com/emoji/48/000000/cloud-with-rain-emoji.png" },
+            { temp: 7, desc: "Солнечно", icon: "https://img.icons8.com/emoji/48/000000/sun-emoji.png" },
+            { temp: 3, desc: "Снег", icon: "https://img.icons8.com/emoji/48/000000/snowflake-emoji.png" },
+            { temp: 5, desc: "Облачно", icon: "https://img.icons8.com/emoji/48/000000/cloud-emoji.png" },
+            { temp: 6, desc: "Солнечно", icon: "https://img.icons8.com/emoji/48/000000/sun-emoji.png" },
+            { temp: 4, desc: "Дождь", icon: "https://img.icons8.com/emoji/48/000000/cloud-with-rain-emoji.png" },
+            { temp: 7, desc: "Солнечно", icon: "https://img.icons8.com/emoji/48/000000/sun-emoji.png" },
+            { temp: 3, desc: "Снег", icon: "https://img.icons8.com/emoji/48/000000/snowflake-emoji.png" },
+            { temp: 5, desc: "Облачно", icon: "https://img.icons8.com/emoji/48/000000/cloud-emoji.png" },
+            { temp: 6, desc: "Солнечно", icon: "https://img.icons8.com/emoji/48/000000/sun-emoji.png" },
+            { temp: 4, desc: "Дождь", icon: "https://img.icons8.com/emoji/48/000000/cloud-with-rain-emoji.png" },
+            { temp: 7, desc: "Солнечно", icon: "https://img.icons8.com/emoji/48/000000/sun-emoji.png" },
+            { temp: 3, desc: "Снег", icon: "https://img.icons8.com/emoji/48/000000/snowflake-emoji.png" },
+            { temp: 5, desc: "Облачно", icon: "https://img.icons8.com/emoji/48/000000/cloud-emoji.png" },
+            { temp: 6, desc: "Солнечно", icon: "https://img.icons8.com/emoji/48/000000/sun-emoji.png" },
+            { temp: 4, desc: "Дождь", icon: "https://img.icons8.com/emoji/48/000000/cloud-with-rain-emoji.png" },
+            { temp: 7, desc: "Солнечно", icon: "https://img.icons8.com/emoji/48/000000/sun-emoji.png" },
+            { temp: 3, desc: "Снег", icon: "https://img.icons8.com/emoji/48/000000/snowflake-emoji.png" },
+            { temp: 5, desc: "Облачно", icon: "https://img.icons8.com/emoji/48/000000/cloud-emoji.png" },
+            { temp: 6, desc: "Солнечно", icon: "https://img.icons8.com/emoji/48/000000/sun-emoji.png" },
+            { temp: 4, desc: "Дождь", icon: "https://img.icons8.com/emoji/48/000000/cloud-with-rain-emoji.png" },
+            { temp: 7, desc: "Солнечно", icon: "https://img.icons8.com/emoji/48/000000/sun-emoji.png" },
+            { temp: 3, desc: "Снег", icon: "https://img.icons8.com/emoji/48/000000/snowflake-emoji.png" }
+        ];
 
-        function saveNotes() {
-            localStorage.setItem("notes", JSON.stringify(notes));
-        }
-
-        function updateDayPreview() {
-            days.forEach(day => {
-                if (day.classList.contains("active")) return; 
-                const n = day.getAttribute("data-day");
-                const notesList = notes[n] || [];
-
-                let preview = notesList
-                    .slice(0, 5)
-                    .map(note => `<span style="background-color:#3399ff; color:white; padding:2px 4px; border-radius:3px;">${note.text.substring(0, 15)}${note.text.length > 15 ? "…" : ""}</span>`)
-                    .join("<br>");
-
-                day.innerHTML = `
-                    <span style="position:absolute; top:5px; right:5px; font-weight:bold; color:black;">${n}</span>
-                    <div style="font-size:14px; text-align:left; padding-top:20px;">
-                        ${preview}
+        const container = document.querySelector('.day');
+        for(let i = 0; i < 30; i++){
+            const day = weatherData[i];
+            container.innerHTML += `
+                <div class="day1" data-day="${i+1}">
+                    <span class="day-number">${i+1}</span>
+                    <div class="weather">
+                        <img src="${day.icon}" alt="${day.desc}">
+                        <span class="temp">${day.temp}°C</span>
+                        <span class="desc">${day.desc}</span>
                     </div>
-                `;
-            });
-        }
-
-        days.forEach(day => {
-            day.addEventListener('click', (e) => {
-                if (["INPUT", "BUTTON", "TEXTAREA"].includes(e.target.tagName)) return;
-                if (activeDay && activeDay !== day) closeDay(activeDay);
-                if (day.classList.contains('active')) closeDay(day); else openDay(day);
-            });
-        });
-
-        function closeDay(day) {
-            day.classList.remove("active");
-            updateDayPreview();
-            activeDay = null;
-        }
-
-        function openDay(day) {
-            const n = day.getAttribute("data-day");
-            if (!notes[n]) notes[n] = [];
-            day.classList.add("active");
-            activeDay = day;
-            day.innerHTML = `
-                <div id="dayContent" style="width:100%; height:100%;">
-                    <h2 style="text-align:center; margin-top:5px;">День ${n}</h2>
-                    <button id="closeBtn" style="width:92%; margin-left:10px;">Закрыть</button>
-                    <input id="noteInput" placeholder="Новая заметка..." style="padding:10px; width:90%; font-size:16px; margin-left:10px; margin-top:10px; margin-bottom:5px;">
-                    <button id="addNoteBtn" style="width:92%; margin-left:10px;">Добавить</button>
-                    <ul id="notesList" style="margin-top:10px; max-height:200px; overflow-y:auto; padding-left:20px;"></ul>
                 </div>
             `;
-            day.querySelector("#closeBtn").onclick = () => closeDay(day);
-            updateNotesList(day);
-            day.querySelector("#addNoteBtn").onclick = () => addNote(day);
         }
-
-        function addNote(day) {
-            const n = day.getAttribute("data-day");
-            const input = day.querySelector("#noteInput");
-            if (input.value.trim() === "") return;
-            notes[n].push({ text: input.value.trim(), done: false });
-            saveNotes();
-            input.value = "";
-            updateNotesList(day);
-            updateDayPreview();
-        }
-
-        function toggleCheckbox(day, index) {
-            const n = day.getAttribute("data-day");
-            notes[n][index].done = !notes[n][index].done;
-            saveNotes();
-        }
-
-        function deleteNote(day, index) {
-            const n = day.getAttribute("data-day");
-            notes[n].splice(index, 1);
-            saveNotes();
-            updateNotesList(day);
-            updateDayPreview();
-        }
-
-        function editNote(day, index) {
-            const n = day.getAttribute("data-day");
-            const list = day.querySelector("#notesList");
-            const li = list.children[index];
-            const note = notes[n][index];
-
-            li.innerHTML = `
-                <textarea style="width:90%;height:50px;font-size:14px;">${note.text}</textarea>
-                <button class="note-edit-btn" onclick="event.stopPropagation(); saveEdit(activeDay, ${index})">Сохранить</button>
-                <button class="note-delete-btn" onclick="event.stopPropagation(); updateNotesList(activeDay)">Отмена</button>
-            `;
-        }
-
-        function saveEdit(day, index) {
-            const n = day.getAttribute("data-day");
-            const list = day.querySelector("#notesList");
-            const li = list.children[index];
-            const newText = li.querySelector("textarea").value.trim();
-            if (newText === "") return;
-            notes[n][index].text = newText;
-            saveNotes();
-            updateNotesList(day);
-            updateDayPreview();
-        }
-
-        function updateNotesList(day) {
-            const n = day.getAttribute("data-day");
-            const list = day.querySelector("#notesList");
-            list.innerHTML = "";
-            notes[n].forEach((note, i) => {
-                const li = document.createElement("li");
-                li.innerHTML = `
-                    <input type="checkbox" ${note.done ? "checked" : ""} onclick="event.stopPropagation(); toggleCheckbox(activeDay, ${i})">
-                    ${note.text}
-                    <button class="note-edit-btn" onclick="event.stopPropagation(); editNote(activeDay, ${i})">Редактировать</button>
-                    <button class="note-delete-btn" onclick="event.stopPropagation(); deleteNote(activeDay, ${i})">Удалить</button>
-                `;
-                list.appendChild(li);
-            });
-        }
-
-        updateDayPreview();
-
-        const button = document.getElementById('toggleBtn');
-        let isWhite = true;
-
-        button.addEventListener('click', () => {
-            if (isWhite) {
-                document.body.style.backgroundColor = '#111';
-                document.body.style.color = 'white';
-                document.querySelectorAll('.day1').forEach(d => { d.style.backgroundColor = '#1e3c50'; d.style.color = 'white'; });
-                document.querySelectorAll('.day2, .day2 div').forEach(d => { d.style.backgroundColor = '#2b4f6d'; d.style.color = 'white'; });
-                button.textContent = 'Сменить на белый фон';
-            } else {
-                document.body.style.backgroundColor = '#e0f7ff';
-                document.body.style.color = 'black';
-                document.querySelectorAll('.day1').forEach(d => { d.style.backgroundColor = '#b3e0ff'; d.style.color = 'black'; });
-                document.querySelectorAll('.day2, .day2 div').forEach(d => { d.style.backgroundColor = '#5eb8e7'; d.style.color = 'white'; });
-                button.textContent = 'Сменить на черный фон';
-            }
-            isWhite = !isWhite;
-        });
     </script>
+</div>
+
+<div class="box">
+    <button id="toggleBtn">Сменить на черный фон</button>
+</div>
+
+<script>
+const toggleBtn = document.getElementById('toggleBtn');
+let isLight = true;
+
+toggleBtn.addEventListener('click', () => {
+    if(isLight){
+        document.body.style.backgroundColor = '#111';
+        document.body.style.color = 'white';
+        document.querySelectorAll('.day1').forEach(d => {
+            d.style.backgroundColor = '#1e3c50';
+            d.style.color = 'white';
+        });
+        document.querySelectorAll('.day2').forEach(d => {
+            d.style.backgroundColor = '#2b4f6d';
+            d.style.color = 'white';
+        });
+        toggleBtn.textContent = 'Сменить на белый фон';
+    } else {
+        document.body.style.backgroundColor = '#e0f7ff';
+        document.body.style.color = 'black';
+        document.querySelectorAll('.day1').forEach(d => {
+            d.style.backgroundColor = '#b3e0ff';
+            d.style.color = 'black';
+        });
+        document.querySelectorAll('.day2').forEach(d => {
+            d.style.backgroundColor = '#4fc3f7';
+            d.style.color = 'white';
+        });
+        toggleBtn.textContent = 'Сменить на черный фон';
+    }
+    isLight = !isLight;
+});
+</script>
 
 </body>
 </html>
