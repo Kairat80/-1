@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Прогноз погоды</title>
+<style>
+html, body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: #e0f7ff;
+    color: black;
+    transition: background-color 0.5s, color 0.5s;
+}
+
+.site-header {
+    background: linear-gradient(135deg, #1e88e5, #4fc3f7);
+    padding: 20px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.header-content {
+    max-width: 1200px;
+    margin: auto;
+}
+
+.logo {
+    text-align: center;
+    font-size: 40px;
+    font-weight: bold;
+    color: white;
+    margin-bottom: 10px;
+}
+
+.header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.contacts {
+    display: flex;
+    gap: 20px;
+    font-size: 18px;
+    color: white;
+    flex-wrap: wrap;
+}
+
+.weather-btn {
+    background: rgba(255,255,255,0.25);
+    backdrop-filter: blur(8px);
+    color: white;
+    padding: 10px 22px;
+    border-radius: 30px;
+    font-size: 16px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255,255,255,0.3);
+}
+
+.weather-btn:hover {
+    background: #0e1ed6;
+    transform: translateY(-2px);
+}
+
+.box {
+    text-align: center;
+    padding: 20px;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 16px;
+    background: #006994;
+    color: white;
+    border-radius: 30px;
+    cursor: pointer;
+    border: none;
+}
+
+button:hover {
+    background: #004f70;
+}
+
+.box, .a {
+    text-align: center;
+    padding: 20px 0;
+    color: rgb(18, 122, 201);
+}
+
+.day2 {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    background: #4fc3f7;
+    text-align: center;
+    font-weight: bold;
+    padding: 10px 0;
+    border-radius: 15px;
+    gap: 5px;
+}
+
+.day2 div {
+    padding: 10px 0;
+    border: none;
+    background: transparent ;
+    color: white;
+    border-radius: 10px;
+}
+
+.day {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    grid-auto-rows: 120px;
+    gap: 5px;
+    padding: 5px;
+}
+
+.day1 {
+    position: relative;
+    border: 1px solid #3b8ec0;
+    background: #b3e0ff;
+    cursor: default;
+    font-size: 18px;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.day1:hover {
+    background: #4fc3f7;
+}
+
+.day-number {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    font-weight: bold;
+}
+
+.weather {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 30px;
+    font-size: 14px;
+}
+
+.weather img {
+    width: 32px;
+    height: 32px;
+    margin-bottom: 3px;
+}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+    <div class="header-content">
+        <div class="logo">Ежедневка</div>
+
+        <div class="header-row">
+            <div class="contacts">
+                <span>050 993 48 97</span>
+                <span>email@mail.com</span>
+                <span>Instagram</span>
+            </div>
+            <div class="buttons">
+            <a href="game.html" class="weather-btn">Игра</a>
+            <a href="weather.html" class="weather-btn">Погода</a>
+            </div>
+        </div>
+    </div>
+</header>
+
+<div class="a">
+    <h1>Прогноз погоды на месяц</h1>
+    <h2>Декабрь 2025 года</h2>
+</div>
+
+<div class="day2">
+    <div>Понедельник</div>
+    <div>Вторник</div>
+    <div>Среда</div>
+    <div>Четверг</div>
+    <div>Пятница</div>
+    <div>Суббота</div>
+    <div>Воскресенье</div>
+</div>
+
+<div class="day">
+    <script>
+        const weatherData = [
+            { temp: 5, desc: "Солнечно", icon: "https://img.icons8.com/emoji/48/000000/sun-emoji.png" },
+            { temp: 6, desc: "Облачно", icon: "https://img.icons8.com/emoji/48/000000/cloud-emoji.png" },
+            { temp: 4, desc: "Дождь", icon: "https://img.icons8.com/emoji/48/000000/cloud-with-rain-emoji.png" },
+            { temp: 7, desc: "Солнечно", icon: "https://img.icons8.com/emoji/48/000000/sun-emoji.png" },
+            { temp: 3, desc: "Снег", icon: "https://img.icons8.com/emoji/48/000000/snowflake-emoji.png" },
+            { temp: 5, desc: "Облачно", icon: "https://img.icons8.com/emoji/48/000000/cloud-emoji.png" },
+            { temp: 6, desc: "Солнечно", icon: "https://img.icons8.com/emoji/48/000000/sun-emoji.png" },
+            { temp: 4, desc: "Дождь", icon: "https://img.icons8.com/emoji/48/000000/cloud-with-rain-emoji.png" },
+            { temp: 7, desc: "Солнечно", icon: "https://img.icons8.com/emoji/48/000000/sun-emoji.png" },
+            { temp: 3, desc: "Снег", icon: "https://img.icons8.com/emoji/48/000000/snowflake-emoji.png" },
+            { temp: 5, desc: "Облачно", icon: "https://img.icons8.com/emoji/48/000000/cloud-emoji.png" },
+            { temp: 6, desc: "Солнечно", icon: "https://img.icons8.com/emoji/48/000000/sun-emoji.png" },
+            { temp: 4, desc: "Дождь", icon: "https://img.icons8.com/emoji/48/000000/cloud-with-rain-emoji.png" },
+            { temp: 7, desc: "Солнечно", icon: "https://img.icons8.com/emoji/48/000000/sun-emoji.png" },
+            { temp: 3, desc: "Снег", icon: "https://img.icons8.com/emoji/48/000000/snowflake-emoji.png" },
+            { temp: 5, desc: "Облачно", icon: "https://img.icons8.com/emoji/48/000000/cloud-emoji.png" },
+            { temp: 6, desc: "Солнечно", icon: "https://img.icons8.com/emoji/48/000000/sun-emoji.png" },
+            { temp: 4, desc: "Дождь", icon: "https://img.icons8.com/emoji/48/000000/cloud-with-rain-emoji.png" },
+            { temp: 7, desc: "Солнечно", icon: "https://img.icons8.com/emoji/48/000000/sun-emoji.png" },
+            { temp: 3, desc: "Снег", icon: "https://img.icons8.com/emoji/48/000000/snowflake-emoji.png" },
+            { temp: 5, desc: "Облачно", icon: "https://img.icons8.com/emoji/48/000000/cloud-emoji.png" },
+            { temp: 6, desc: "Солнечно", icon: "https://img.icons8.com/emoji/48/000000/sun-emoji.png" },
+            { temp: 4, desc: "Дождь", icon: "https://img.icons8.com/emoji/48/000000/cloud-with-rain-emoji.png" },
+            { temp: 7, desc: "Солнечно", icon: "https://img.icons8.com/emoji/48/000000/sun-emoji.png" },
+            { temp: 3, desc: "Снег", icon: "https://img.icons8.com/emoji/48/000000/snowflake-emoji.png" },
+            { temp: 5, desc: "Облачно", icon: "https://img.icons8.com/emoji/48/000000/cloud-emoji.png" },
+            { temp: 6, desc: "Солнечно", icon: "https://img.icons8.com/emoji/48/000000/sun-emoji.png" },
+            { temp: 4, desc: "Дождь", icon: "https://img.icons8.com/emoji/48/000000/cloud-with-rain-emoji.png" },
+            { temp: 7, desc: "Солнечно", icon: "https://img.icons8.com/emoji/48/000000/sun-emoji.png" },
+            { temp: 3, desc: "Снег", icon: "https://img.icons8.com/emoji/48/000000/snowflake-emoji.png" }
+        ];
+
+        const container = document.querySelector('.day');
+        for(let i = 0; i < 30; i++){
+            const day = weatherData[i];
+            container.innerHTML += `
+                <div class="day1" data-day="${i+1}">
+                    <span class="day-number">${i+1}</span>
+                    <div class="weather">
+                        <img src="${day.icon}" alt="${day.desc}">
+                        <span class="temp">${day.temp}°C</span>
+                        <span class="desc">${day.desc}</span>
+                    </div>
+                </div>
+            `;
+        }
+    </script>
+</div>
+
+<div class="box">
+    <button id="toggleBtn">Сменить на черный фон</button>
+</div>
+
+<script>
+const toggleBtn = document.getElementById('toggleBtn');
+let isLight = true;
+
+toggleBtn.addEventListener('click', () => {
+    if(isLight){
+        document.body.style.backgroundColor = '#111';
+        document.body.style.color = 'white';
+        document.querySelectorAll('.day1').forEach(d => {
+            d.style.backgroundColor = '#1e3c50';
+            d.style.color = 'white';
+        });
+        document.querySelectorAll('.day2').forEach(d => {
+            d.style.backgroundColor = '#2b4f6d';
+            d.style.color = 'white';
+        });
+        toggleBtn.textContent = 'Сменить на белый фон';
+    } else {
+        document.body.style.backgroundColor = '#e0f7ff';
+        document.body.style.color = 'black';
+        document.querySelectorAll('.day1').forEach(d => {
+            d.style.backgroundColor = '#b3e0ff';
+            d.style.color = 'black';
+        });
+        document.querySelectorAll('.day2').forEach(d => {
+            d.style.backgroundColor = '#4fc3f7';
+            d.style.color = 'white';
+        });
+        toggleBtn.textContent = 'Сменить на черный фон';
+    }
+    isLight = !isLight;
+});
+</script>
+
+</body>
+</html>
