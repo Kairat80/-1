@@ -1,196 +1,275 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ежедневка - Игра</title>
+<title>Ежедневка — Игра</title>
+
 <style>
-    body {
-        margin: 0;
-        font-family: Arial, sans-serif;
-        background-color: #88c0d0;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-    }
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #88c0d0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
 
-    .menu, .game {
-        text-align: center;
-    }
+.menu {
+    text-align: center;
+}
 
-    .menu h1 {
-        font-size: 48px;
-        color: #fff;
-        margin-bottom: 20px;
-    }
+.menu h1 {
+    font-size: 48px;
+    color: #fff;
+    margin-bottom: 20px;
+}
 
-    .menu button {
-        padding: 15px 30px;
-        font-size: 20px;
-        cursor: pointer;
-        margin-top: 20px;
-    }
+.menu button {
+    padding: 15px 30px;
+    font-size: 20px;
+    border-radius: 30px;
+    border: none;
+    cursor: pointer;
+    background: white;
+    margin-bottom: 20px;
+}
 
-    .game {
-        display: none;
-        position: relative;
-        width: 300px;
-        height: 500px;
-        background: linear-gradient(to bottom, #555, #333);
-        overflow: hidden;
-        border-radius: 10px;
-        box-shadow: 0 0 20px rgba(0,0,0,0.5);
-    }
+.menu-links {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
 
-    .car {
-        width: 60px;
-        height: 100px;
-        position: absolute;
-        bottom: 20px;
-        left: 120px;
-        transition: left 0.2s;
-    }
+.menu-links a {
+    text-decoration: none;
+    padding: 12px 22px;
+    border-radius: 25px;
+    background: rgba(255,255,255,0.85);
+    color: #333;
+    font-weight: bold;
+}
 
-    .car img {
-        width: 100%;
-    }
+.game {
+    display: none;
+    position: relative;
+    width: 300px;
+    height: 500px;
+    background: linear-gradient(to bottom, #555, #333);
+    overflow: hidden;
+    border-radius: 10px;
+}
 
-    .obstacle, .coin {
-        width: 60px;
-        height: 60px;
-        position: absolute;
-        top: -60px;
-        transition: top 0.1s;
-    }
+.car {
+    width: 60px;
+    height: 100px;
+    position: absolute;
+    bottom: 20px;
+    left: 120px;
+    transition: left 0.2s;
+}
 
-    .obstacle img, .coin img {
-        width: 100%;
-    }
+.car img {
+    width: 100%;
+}
 
-    .score {
-        position: absolute;
-        top: 10px;
-        left: 10px;
-        font-size: 20px;
-        color: white;
-        font-weight: bold;
-    }
+.obstacle, .coin {
+    width: 60px;
+    height: 60px;
+    position: absolute;
+    top: -60px;
+}
+
+.obstacle img, .coin img {
+    width: 100%;
+}
+
+.score {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    color: white;
+    font-weight: bold;
+}
 </style>
 </head>
+
 <body>
 
 <div class="menu">
     <h1>Ежедневка</h1>
-    <button onclick="startGame()">Начать игру</button>
+    <button onclick="startGame()">▶ Начать игру</button>
+
+    <div class="menu-links">
+        <a href="weather.html">🌤 Погода</a>
+        <a href="planner.html">📒 Ежедневник</a>
+    </div>
 </div>
 
 <div class="game" id="game">
     <div class="score" id="score">Очки: 0</div>
     <div class="car" id="car">
-        <img src="blue-removebg-preview.png" alt="машинка">
+        <img src="blue-removebg-preview.png">
     </div>
 </div>
 
 <script>
 const game = document.getElementById('game');
 const car = document.getElementById('car');
-const scoreDisplay = document.getElementById('score');
-const lanes = [20, 120, 220]; 
-let carLane = 1; 
-let score = 0;
+const scoreEl = document.getElementById('score');
+
+const lanes = [20, 120, 220];
+let carLane = 1;
+
 let obstacles = [];
 let coins = [];
-let gameInterval;
+let score = 0;
+let speed = 5;
+let loop;
+
+// Для спавна препятствий
+let spawnCooldown = 0;
+
+// Для контроля ускорения
+let nextSpeedIncrease = 5;
 
 function startGame() {
     document.querySelector('.menu').style.display = 'none';
     game.style.display = 'block';
-    score = 0;
-    scoreDisplay.textContent = 'Очки: 0';
-    carLane = 1;
-    car.style.left = lanes[carLane] + 'px';
+
+    obstacles.forEach(o => o.remove());
+    coins.forEach(c => c.remove());
     obstacles = [];
     coins = [];
-    gameInterval = setInterval(gameLoop, 50);
+
+    score = 0;
+    speed = 5;
+    spawnCooldown = 0;
+    nextSpeedIncrease = 5;
+    scoreEl.textContent = 'Очки: 0';
+
+    carLane = 1;
+    car.style.left = lanes[carLane] + 'px';
+
+    loop = setInterval(gameLoop, 50);
+}
+
+// Сложность по очкам (только спавн)
+function difficulty() {
+    if (score >= 30) return { chance: 0.095, gap: 70 };
+    if (score >= 20) return { chance: 0.08, gap: 80 };
+    if (score >= 10) return { chance: 0.065, gap: 90 };
+    return { chance: 0.05, gap: 100 };
 }
 
 function gameLoop() {
-    if (Math.random() < 0.02) createObstacle();
-    if (Math.random() < 0.01) createCoin();
+    // Увеличение скорости каждые 5 очков
+    if (score >= nextSpeedIncrease) {
+        speed += 1;
+        nextSpeedIncrease += 5;
+    }
 
-    moveObjects(obstacles);
-    moveObjects(coins);
+    const d = difficulty();
 
+    // Спавн препятствий с учетом cooldown
+    spawnCooldown -= speed;
+    if (spawnCooldown <= 0 && Math.random() < d.chance) {
+        createObstacle();
+        spawnCooldown = d.gap;
+    }
+
+    if (Math.random() < 0.015) createCoin();
+
+    move(obstacles);
+    move(coins);
     checkCollision();
 }
 
 function createObstacle() {
     const lane = Math.floor(Math.random() * 3);
-    const obstacle = document.createElement('div');
-    obstacle.className = 'obstacle';
-    obstacle.style.left = lanes[lane] + 'px';
-    obstacle.style.top = '-60px';
-    obstacle.innerHTML = '<img src="pngtree-tree-in-transparent-background-png-image_5717417-removebg-preview.png">';
-    game.appendChild(obstacle);
-    obstacles.push(obstacle);
+
+    // Не даем 3 в ряд
+    const sameLane = obstacles.filter(o =>
+        parseInt(o.style.left) === lanes[lane] &&
+        parseInt(o.style.top) < 120
+    );
+
+    if (sameLane.length >= 1) return;
+
+    const o = document.createElement('div');
+    o.className = 'obstacle';
+    o.style.left = lanes[lane] + 'px';
+    o.style.top = '-60px';
+    o.innerHTML = '<img src="pngtree-tree-in-transparent-background-png-image_5717417-removebg-preview.png">';
+    game.appendChild(o);
+    obstacles.push(o);
 }
 
 function createCoin() {
     const lane = Math.floor(Math.random() * 3);
-    const coin = document.createElement('div');
-    coin.className = 'coin';
-    coin.style.left = lanes[lane] + 'px';
-    coin.style.top = '-60px';
-    coin.innerHTML = '<img src="monetka1-removebg-preview.png">'; 
-    game.appendChild(coin);
-    coins.push(coin);
+    const c = document.createElement('div');
+    c.className = 'coin';
+    c.style.left = lanes[lane] + 'px';
+    c.style.top = '-60px';
+    c.innerHTML = '<img src="monetka1-removebg-preview.png">';
+    game.appendChild(c);
+    coins.push(c);
 }
 
-function moveObjects(array) {
-    for (let i = array.length - 1; i >= 0; i--) {
-        const obj = array[i];
-        obj.style.top = (parseInt(obj.style.top) + 5) + 'px';
+function move(arr) {
+    arr.forEach((obj, i) => {
+        obj.style.top = (parseInt(obj.style.top) + speed) + 'px';
+
         if (parseInt(obj.style.top) > 500) {
             obj.remove();
-            array.splice(i, 1);
+            arr.splice(i, 1);
         }
-    }
+    });
 }
 
 function checkCollision() {
-    obstacles.forEach(obs => {
-        if (parseInt(obs.style.top) + 60 > 420 && parseInt(obs.style.top) < 520) {
-            if (parseInt(obs.style.left) === lanes[carLane]) {
-                endGame();
-            }
-        }
+    const carR = car.getBoundingClientRect();
+
+    obstacles.forEach(o => {
+        const r = o.getBoundingClientRect();
+        if (
+            carR.left + 10 < r.right - 10 &&
+            carR.right - 10 > r.left + 10 &&
+            carR.top + 20 < r.bottom - 20 &&
+            carR.bottom - 10 > r.top + 10
+        ) endGame();
     });
 
-    coins.forEach((coin, index) => {
-        if (parseInt(coin.style.top) + 60 > 420 && parseInt(coin.style.top) < 520) {
-            if (parseInt(coin.style.left) === lanes[carLane]) {
-                score++;
-                scoreDisplay.textContent = 'Очки: ' + score;
-                coin.remove();
-                coins.splice(index, 1);
-            }
+    coins.forEach((c, i) => {
+        const r = c.getBoundingClientRect();
+        if (
+            carR.left + 15 < r.right - 15 &&
+            carR.right - 15 > r.left + 15 &&
+            carR.top + 25 < r.bottom - 25 &&
+            carR.bottom - 15 > r.top + 15
+        ) {
+            score++;
+            scoreEl.textContent = 'Очки: ' + score;
+            c.remove();
+            coins.splice(i, 1);
         }
     });
 }
 
 function endGame() {
-    clearInterval(gameInterval);
-    alert('Игра окончена! Ваши очки: ' + score);
+    clearInterval(loop);
+    alert('Игра окончена! Очки: ' + score);
     game.style.display = 'none';
     document.querySelector('.menu').style.display = 'block';
 }
 
-document.addEventListener('keydown', (e) => {
+document.addEventListener('keydown', e => {
     if (e.key === 'ArrowLeft' && carLane > 0) {
         carLane--;
         car.style.left = lanes[carLane] + 'px';
-    } else if (e.key === 'ArrowRight' && carLane < 2) {
+    }
+    if (e.key === 'ArrowRight' && carLane < 2) {
         carLane++;
         car.style.left = lanes[carLane] + 'px';
     }
